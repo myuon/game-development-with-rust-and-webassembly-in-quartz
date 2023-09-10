@@ -147,6 +147,8 @@ fun main(): externref {
     js_image_set_onload_externref1(image, "image_onload_callback", context);
     js_image_set_onerror(image, "image_onerror_callback");
 
+    fetch_json("assets/rhb.json");
+
     return context;
 }
 
@@ -158,5 +160,11 @@ fun image_onload_callback(image: externref, context: externref) {
 @[ffi_export("image_onerror_callback")]
 fun image_onerror_callback(image: externref) {
     panic("Image failed to load");
+}
+
+fun fetch_json(path: string) {
+    let window = js_window();
+    let resp = js_fetch(window, path);
+    let json = js_response_text(resp);
 }
 

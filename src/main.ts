@@ -126,6 +126,12 @@ const init = async () => {
       ) => {
         context.drawImage(image, x, y);
       },
+      fetch: (url: number) => {
+        return fetch(readJsString(url));
+      },
+      response_text: (response: Response) => {
+        return response.text();
+      },
     },
     wasi_snapshot_preview1: {
       fd_read: () => {},

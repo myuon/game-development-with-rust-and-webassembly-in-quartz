@@ -72,6 +72,12 @@ declare fun image_set_onload_externref1(image: externref, callback: ptr[byte], a
 @[declare_params(image as wasm_externref, callback as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun image_set_onerror(image: externref, callback: ptr[byte]);
 
+@[declare_params(window as wasm_externref, url as wasm_i32, result as wasm_externref), declare_namespace("js")]
+declare fun fetch(window: externref, url: ptr[byte]): externref;
+
+@[declare_params(response as wasm_externref, result as wasm_i32), declare_namespace("js")]
+declare fun response_text(response: externref): i32;
+
 // ----
 // js library
 fun js_console_log(message: string) {
@@ -148,5 +154,13 @@ fun js_image_set_onload_externref1(image: externref, callback_name: string, arg1
 
 fun js_image_set_onerror(image: externref, callback_name: string) {
     _image_set_onerror(image, JsString::new(callback_name).data);
+}
+
+fun js_fetch(window: externref, url: string): externref {
+    return _fetch(window, JsString::new(url).data);
+}
+
+fun js_response_text(response: externref): i32 {
+    return _response_text(response);
 }
 
