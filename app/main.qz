@@ -142,6 +142,11 @@ fun main(): externref {
         5,
     );
 
+    let image = js_image_new();
+    js_image_set_src(image, "assets/Idle (1).png");
+    js_context_draw_image(context, image, 0, 0);
+    js_image_set_onload(image, image);
+
     return context;
 }
 

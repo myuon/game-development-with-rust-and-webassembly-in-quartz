@@ -81,6 +81,25 @@ const init = async () => {
       math_random_minmax: (min: number, max: number) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       },
+      image_new: () => {
+        return new Image();
+      },
+      image_set_src: (image: HTMLImageElement, src: number) => {
+        image.src = readJsString(src);
+      },
+      image_set_onload: (image: HTMLImageElement, onload: number) => {
+        image.onload = () => {
+          console.log(instance.exports);
+        };
+      },
+      context_draw_image: (
+        context: CanvasRenderingContext2D,
+        image: HTMLImageElement,
+        x: number,
+        y: number
+      ) => {
+        context.drawImage(image, x, y);
+      },
     },
     wasi_snapshot_preview1: {
       fd_read: () => {},
