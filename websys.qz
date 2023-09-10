@@ -28,8 +28,8 @@ fun js_window(): externref {
     return _window();
 }
 
-@[declare_params(result as wasm_externref), declare_namespace("js")]
-declare fun window_document(w: externref): externref;
+@[declare_params(window as wasm_externref, result as wasm_externref), declare_namespace("js")]
+declare fun window_document(window: externref): externref;
 
 fun js_window_document(w: externref): externref {
     return _window_document(w);

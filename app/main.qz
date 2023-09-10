@@ -4,5 +4,6 @@ fun main(): externref {
   js_console_log("Hello, Wasm!");
 
   let window = js_window();
-  return window;
+  let document = js_window_document(window);
+  return document;
 }
