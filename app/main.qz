@@ -1,5 +1,8 @@
 import websys;
 
-fun main() {
+fun main(): externref {
   js_console_log("Hello, Wasm!");
+
+  let window = js_window();
+  return window;
 }

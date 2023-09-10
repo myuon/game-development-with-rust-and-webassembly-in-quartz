@@ -30,6 +30,13 @@ const init = async () => {
 
         return BigInt(0);
       },
+      window: () => {
+        return window;
+      },
+      window_document: (window: Window) => {
+        console.log(window);
+        return window.document;
+      },
     },
     wasi_snapshot_preview1: {
       fd_read: () => {},
@@ -73,7 +80,8 @@ const init = async () => {
   });
   const main = instance.exports.main as CallableFunction;
 
-  main();
+  const result = main();
+  console.log(result);
 };
 
 init();

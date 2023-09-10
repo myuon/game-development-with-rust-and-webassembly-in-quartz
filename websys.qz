@@ -20,3 +20,17 @@ declare fun console_log(message: ptr[byte]): nil;
 fun js_console_log(m: string): nil {
     _console_log(JsString::new(m).data);
 }
+
+@[declare_params(result as wasm_externref), declare_namespace("js")]
+declare fun window(): externref;
+
+fun js_window(): externref {
+    return _window();
+}
+
+@[declare_params(result as wasm_externref), declare_namespace("js")]
+declare fun window_document(w: externref): externref;
+
+fun js_window_document(w: externref): externref {
+    return _window_document(w);
+}
