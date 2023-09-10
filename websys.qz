@@ -1,0 +1,2 @@
+@[declare_params(message as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun console_log(message: string): nil;

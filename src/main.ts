@@ -17,6 +17,13 @@ const init = async () => {
         throw new Error("=== abort ===");
       },
     },
+    js: {
+      console_log: (message: number) => {
+        console.log(message);
+
+        return BigInt(0);
+      },
+    },
     wasi_snapshot_preview1: {
       fd_read: () => {},
       fd_filestat_get: () => {},
