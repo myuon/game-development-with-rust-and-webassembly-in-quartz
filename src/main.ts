@@ -72,6 +72,15 @@ const init = async () => {
       context_close_path: (context: CanvasRenderingContext2D) => {
         context.closePath();
       },
+      context_set_fill_style: (
+        context: CanvasRenderingContext2D,
+        fillStyle: number
+      ) => {
+        context.fillStyle = readJsString(fillStyle);
+      },
+      math_random_minmax: (min: number, max: number) => {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      },
     },
     wasi_snapshot_preview1: {
       fd_read: () => {},

@@ -50,6 +50,12 @@ declare fun context_fill(context: externref): nil;
 @[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
 declare fun context_close_path(context: externref): nil;
 
+@[declare_params(context as wasm_externref, style as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_set_fill_style(context: externref, style: ptr[byte]): nil;
+
+@[declare_params(min as wasm_i32, max as wasm_i32, result as wasm_i32), declare_namespace("js")]
+declare fun math_random_minmax(min: i32, max: i32): i32;
+
 // ----
 // js library
 
@@ -95,4 +101,12 @@ fun js_context_fill(context: externref): nil {
 
 fun js_context_close_path(context: externref): nil {
     _context_close_path(context);
+}
+
+fun js_context_set_fill_style(context: externref, style: string): nil {
+    _context_set_fill_style(context, JsString::new(style).data);
+}
+
+fun js_math_random_minmax(min: i32, max: i32): i32 {
+    return _math_random_minmax(min, max);
 }
