@@ -5,5 +5,17 @@ fun main(): externref {
 
   let window = js_window();
   let document = js_window_document(window);
-  return document;
+  let canvas = js_document_get_element_by_id(document, "canvas");
+  let context = js_canvas_get_context(canvas, "2d");
+
+  js_context_move_to(context, 300, 0);
+  js_context_begin_path(context);
+  js_context_line_to(context, 0, 600);
+  js_context_line_to(context, 600, 600);
+  js_context_line_to(context, 300, 0);
+  js_context_close_path(context);
+  js_context_stroke(context);
+  js_context_fill(context);
+
+  return context;
 }

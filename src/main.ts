@@ -7,6 +7,17 @@ const getMemoryView = () => {
   return new DataView((instance.exports.memory as WebAssembly.Memory).buffer);
 };
 
+const readJsString = (ciovec: number): string => {
+  const mem = getMemoryView();
+
+  const address = mem.getUint32(ciovec, true);
+  const length = mem.getUint32(ciovec + 4, true);
+
+  const data = new Uint8Array(mem.buffer, address, length);
+
+  return new TextDecoder().decode(data);
+};
+
 const init = async () => {
   instance = await mainModule({
     env: {
@@ -19,16 +30,7 @@ const init = async () => {
     },
     js: {
       console_log: (ciovec: number) => {
-        const mem = getMemoryView();
-
-        const address = mem.getUint32(ciovec, true);
-        const length = mem.getUint32(ciovec + 4, true);
-
-        const data = new Uint8Array(mem.buffer, address, length);
-
-        console.log(new TextDecoder().decode(data));
-
-        return BigInt(0);
+        console.log(readJsString(ciovec));
       },
       window: () => {
         return window;
@@ -36,6 +38,39 @@ const init = async () => {
       window_document: (window: Window) => {
         console.log(window);
         return window.document;
+      },
+      document_get_element_by_id: (document: Document, id: number) => {
+        const idStr = readJsString(id);
+        return document.getElementById(idStr);
+      },
+      canvas_get_context: (canvas: HTMLCanvasElement, context: number) => {
+        return canvas.getContext(readJsString(context));
+      },
+      context_move_to: (
+        context: CanvasRenderingContext2D,
+        x: number,
+        y: number
+      ) => {
+        context.moveTo(x, y);
+      },
+      context_begin_path: (context: CanvasRenderingContext2D) => {
+        context.beginPath();
+      },
+      context_line_to: (
+        context: CanvasRenderingContext2D,
+        x: number,
+        y: number
+      ) => {
+        context.lineTo(x, y);
+      },
+      context_stroke: (context: CanvasRenderingContext2D) => {
+        context.stroke();
+      },
+      context_fill: (context: CanvasRenderingContext2D) => {
+        context.fill();
+      },
+      context_close_path: (context: CanvasRenderingContext2D) => {
+        context.closePath();
       },
     },
     wasi_snapshot_preview1: {

@@ -14,23 +14,85 @@ module JsString {
     }
 }
 
+// ----
+// bindings
+
 @[declare_params(message as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun console_log(message: ptr[byte]): nil;
 
-fun js_console_log(m: string): nil {
-    _console_log(JsString::new(m).data);
-}
-
 @[declare_params(result as wasm_externref), declare_namespace("js")]
 declare fun window(): externref;
+
+@[declare_params(window as wasm_externref, result as wasm_externref), declare_namespace("js")]
+declare fun window_document(window: externref): externref;
+
+@[declare_params(document as wasm_externref, id as wasm_i32, result as wasm_externref), declare_namespace("js")]
+declare fun document_get_element_by_id(document: externref, id: ptr[byte]): externref;
+
+@[declare_params(canvas as wasm_externref, context as wasm_i32, result as wasm_externref), declare_namespace("js")]
+declare fun canvas_get_context(canvas: externref, context: ptr[byte]): externref;
+
+@[declare_params(context as wasm_externref, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_move_to(context: externref, x: i32, y: i32): nil;
+
+@[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
+declare fun context_begin_path(context: externref): nil;
+
+@[declare_params(context as wasm_externref, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_line_to(context: externref, x: i32, y: i32): nil;
+
+@[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
+declare fun context_stroke(context: externref): nil;
+
+@[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
+declare fun context_fill(context: externref): nil;
+
+@[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
+declare fun context_close_path(context: externref): nil;
+
+// ----
+// js library
+
+fun js_console_log(message: string): nil {
+    _console_log(JsString::new(message).data);
+}
 
 fun js_window(): externref {
     return _window();
 }
 
-@[declare_params(window as wasm_externref, result as wasm_externref), declare_namespace("js")]
-declare fun window_document(window: externref): externref;
+fun js_window_document(window: externref): externref {
+    return _window_document(window);
+}
 
-fun js_window_document(w: externref): externref {
-    return _window_document(w);
+fun js_document_get_element_by_id(document: externref, id: string): externref {
+    return _document_get_element_by_id(document, JsString::new(id).data);
+}
+
+fun js_canvas_get_context(canvas: externref, context: string): externref {
+    return _canvas_get_context(canvas, JsString::new(context).data);
+}
+
+fun js_context_move_to(context: externref, x: i32, y: i32): nil {
+    _context_move_to(context, x, y);
+}
+
+fun js_context_begin_path(context: externref): nil {
+    _context_begin_path(context);
+}
+
+fun js_context_line_to(context: externref, x: i32, y: i32): nil {
+    _context_line_to(context, x, y);
+}
+
+fun js_context_stroke(context: externref): nil {
+    _context_stroke(context);
+}
+
+fun js_context_fill(context: externref): nil {
+    _context_fill(context);
+}
+
+fun js_context_close_path(context: externref): nil {
+    _context_close_path(context);
 }
