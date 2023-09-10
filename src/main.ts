@@ -87,9 +87,35 @@ const init = async () => {
       image_set_src: (image: HTMLImageElement, src: number) => {
         image.src = readJsString(src);
       },
-      image_set_onload: (image: HTMLImageElement, onload: number) => {
+      image_set_onload: (image: HTMLImageElement, callback_name: number) => {
         image.onload = () => {
-          console.log(instance.exports);
+          const callback = instance.exports[
+            readJsString(callback_name)
+          ] as CallableFunction;
+
+          callback();
+        };
+      },
+      image_set_onload_externref1: (
+        image: HTMLImageElement,
+        callback_name: number,
+        context: unknown
+      ) => {
+        image.onload = () => {
+          const callback = instance.exports[
+            readJsString(callback_name)
+          ] as CallableFunction;
+
+          callback(image, context);
+        };
+      },
+      image_set_onerror: (image: HTMLImageElement, callback_name: number) => {
+        image.onerror = () => {
+          const callback = instance.exports[
+            readJsString(callback_name)
+          ] as CallableFunction;
+
+          callback();
         };
       },
       context_draw_image: (

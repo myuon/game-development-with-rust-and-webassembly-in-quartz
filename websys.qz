@@ -63,8 +63,14 @@ declare fun image_set_src(image: externref, src: ptr[byte]);
 @[declare_params(context as wasm_externref, image as wasm_externref, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun context_draw_image(context: externref, image: externref, x: i32, y: i32);
 
-@[declare_params(image as wasm_externref, callback as wasm_externref, result as wasm_void), declare_namespace("js")]
-declare fun image_set_onload(image: externref, callback: externref);
+@[declare_params(image as wasm_externref, callback as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun image_set_onload(image: externref, callback: ptr[byte]);
+
+@[declare_params(image as wasm_externref, callback as wasm_i32, arg1 as wasm_externref, result as wasm_void), declare_namespace("js")]
+declare fun image_set_onload_externref1(image: externref, callback: ptr[byte], arg1: externref);
+
+@[declare_params(image as wasm_externref, callback as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun image_set_onerror(image: externref, callback: ptr[byte]);
 
 // ----
 // js library
@@ -132,7 +138,15 @@ fun js_context_draw_image(context: externref, image: externref, x: i32, y: i32) 
     _context_draw_image(context, image, x, y);
 }
 
-fun js_image_set_onload(image: externref, callback: externref) {
-    _image_set_onload(image, callback);
+fun js_image_set_onload(image: externref, callback_name: string) {
+    _image_set_onload(image, JsString::new(callback_name).data);
+}
+
+fun js_image_set_onload_externref1(image: externref, callback_name: string, arg1: externref) {
+    _image_set_onload_externref1(image, JsString::new(callback_name).data, arg1);
+}
+
+fun js_image_set_onerror(image: externref, callback_name: string) {
+    _image_set_onerror(image, JsString::new(callback_name).data);
 }
 
