@@ -18,8 +18,15 @@ const init = async () => {
       },
     },
     js: {
-      console_log: (message: number) => {
-        console.log(message);
+      console_log: (ciovec: number) => {
+        const mem = getMemoryView();
+
+        const address = mem.getUint32(ciovec, true);
+        const length = mem.getUint32(ciovec + 4, true);
+
+        const data = new Uint8Array(mem.buffer, address, length);
+
+        console.log(new TextDecoder().decode(data));
 
         return BigInt(0);
       },

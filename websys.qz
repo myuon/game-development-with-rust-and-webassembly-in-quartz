@@ -1,2 +1,22 @@
+struct JsString {
+    // ciovec
+    data: ptr[byte],
+}
+
+module JsString {
+    fun new(s: string): JsString {
+        let ciovec = make[ptr[byte]](8);
+        set_ciovec(ciovec, s.data, s.length);
+
+        return JsString {
+            data: ciovec,
+        };
+    }
+}
+
 @[declare_params(message as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun console_log(message: string): nil;
+declare fun console_log(message: ptr[byte]): nil;
+
+fun js_console_log(m: string): nil {
+    _console_log(JsString::new(m).data);
+}

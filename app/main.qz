@@ -1,6 +1,5 @@
 import websys;
 
 fun main() {
-  println("Hello, Wasm!");
-  _console_log("Hello, Wasm!");
+  js_console_log("Hello, Wasm!");
 }
