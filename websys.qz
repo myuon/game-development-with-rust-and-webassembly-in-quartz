@@ -1,6 +1,5 @@
 struct JsString {
-    // ciovec
-    data: ptr[byte],
+    data: ptr[byte], // ciovec
 }
 
 module JsString {
@@ -16,9 +15,8 @@ module JsString {
 
 // ----
 // bindings
-
 @[declare_params(message as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun console_log(message: ptr[byte]): nil;
+declare fun console_log(message: ptr[byte]);
 
 @[declare_params(result as wasm_externref), declare_namespace("js")]
 declare fun window(): externref;
@@ -33,33 +31,32 @@ declare fun document_get_element_by_id(document: externref, id: ptr[byte]): exte
 declare fun canvas_get_context(canvas: externref, context: ptr[byte]): externref;
 
 @[declare_params(context as wasm_externref, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun context_move_to(context: externref, x: i32, y: i32): nil;
+declare fun context_move_to(context: externref, x: i32, y: i32);
 
 @[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
-declare fun context_begin_path(context: externref): nil;
+declare fun context_begin_path(context: externref);
 
 @[declare_params(context as wasm_externref, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun context_line_to(context: externref, x: i32, y: i32): nil;
+declare fun context_line_to(context: externref, x: i32, y: i32);
 
 @[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
-declare fun context_stroke(context: externref): nil;
+declare fun context_stroke(context: externref);
 
 @[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
-declare fun context_fill(context: externref): nil;
+declare fun context_fill(context: externref);
 
 @[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
-declare fun context_close_path(context: externref): nil;
+declare fun context_close_path(context: externref);
 
 @[declare_params(context as wasm_externref, style as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun context_set_fill_style(context: externref, style: ptr[byte]): nil;
+declare fun context_set_fill_style(context: externref, style: ptr[byte]);
 
 @[declare_params(min as wasm_i32, max as wasm_i32, result as wasm_i32), declare_namespace("js")]
 declare fun math_random_minmax(min: i32, max: i32): i32;
 
 // ----
 // js library
-
-fun js_console_log(message: string): nil {
+fun js_console_log(message: string) {
     _console_log(JsString::new(message).data);
 }
 
@@ -79,34 +76,35 @@ fun js_canvas_get_context(canvas: externref, context: string): externref {
     return _canvas_get_context(canvas, JsString::new(context).data);
 }
 
-fun js_context_move_to(context: externref, x: i32, y: i32): nil {
+fun js_context_move_to(context: externref, x: i32, y: i32) {
     _context_move_to(context, x, y);
 }
 
-fun js_context_begin_path(context: externref): nil {
+fun js_context_begin_path(context: externref) {
     _context_begin_path(context);
 }
 
-fun js_context_line_to(context: externref, x: i32, y: i32): nil {
+fun js_context_line_to(context: externref, x: i32, y: i32) {
     _context_line_to(context, x, y);
 }
 
-fun js_context_stroke(context: externref): nil {
+fun js_context_stroke(context: externref) {
     _context_stroke(context);
 }
 
-fun js_context_fill(context: externref): nil {
+fun js_context_fill(context: externref) {
     _context_fill(context);
 }
 
-fun js_context_close_path(context: externref): nil {
+fun js_context_close_path(context: externref) {
     _context_close_path(context);
 }
 
-fun js_context_set_fill_style(context: externref, style: string): nil {
+fun js_context_set_fill_style(context: externref, style: string) {
     _context_set_fill_style(context, JsString::new(style).data);
 }
 
 fun js_math_random_minmax(min: i32, max: i32): i32 {
     return _math_random_minmax(min, max);
 }
+
