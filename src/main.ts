@@ -91,48 +91,53 @@ const init = async () => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       },
       image_new: () => {
-        return new Image();
+        return insert(store, new Image());
       },
-      image_set_src: (image: HTMLImageElement, src: number) => {
+      image_set_src: (imageId: number, src: number) => {
+        const image = get<HTMLImageElement>(store, imageId);
         image.src = readJsString(src);
       },
-      image_set_onload: (image: HTMLImageElement, callback_name: number) => {
+      image_set_onload: (imageId: number, callbackName: number) => {
+        const image = get<HTMLImageElement>(store, imageId);
         image.onload = () => {
           const callback = instance.exports[
-            readJsString(callback_name)
+            readJsString(callbackName)
           ] as CallableFunction;
 
           callback();
         };
       },
-      image_set_onload_externref1: (
-        image: HTMLImageElement,
-        callback_name: number,
-        context: unknown
+      image_set_onload_ref1: (
+        imageId: number,
+        callbackName: number,
+        contextId: number
       ) => {
+        const image = get<HTMLImageElement>(store, imageId);
         image.onload = () => {
           const callback = instance.exports[
-            readJsString(callback_name)
+            readJsString(callbackName)
           ] as CallableFunction;
 
-          callback(image, context);
+          callback(BigInt(imageId << 32), BigInt(contextId << 32));
         };
       },
-      image_set_onerror: (image: HTMLImageElement, callback_name: number) => {
+      image_set_onerror: (image: HTMLImageElement, callbackName: number) => {
         image.onerror = () => {
           const callback = instance.exports[
-            readJsString(callback_name)
+            readJsString(callbackName)
           ] as CallableFunction;
 
           callback();
         };
       },
       context_draw_image: (
-        context: CanvasRenderingContext2D,
-        image: HTMLImageElement,
+        contextId: number,
+        imageId: number,
         x: number,
         y: number
       ) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
+        const image = get<HTMLImageElement>(store, imageId);
         context.drawImage(image, x, y);
       },
       fetch: (url: number) => {

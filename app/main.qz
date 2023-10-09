@@ -141,9 +141,9 @@ fun main() {
         5,
     );
 
-    // let image = js_image_new();
-    // js_image_set_src(image, "assets/Idle (1).png");
-    // js_image_set_onload_externref1(image, "image_onload_callback", context);
+    let image = js_image_new();
+    js_image_set_src(image, "assets/Idle (1).png");
+    js_image_set_onload_ref1(image, "image_onload_callback", context);
     // js_image_set_onerror(image, "image_onerror_callback");
 
     // fetch_json("assets/rhb.json");
@@ -152,14 +152,16 @@ fun main() {
     return nil;
 }
 
-// @[ffi_export("image_onload_callback")]
-// fun image_onload_callback(image: externref, context: externref) {
-//     js_context_draw_image(context, image, 0, 0);
-// }
-// @[ffi_export("image_onerror_callback")]
-// fun image_onerror_callback(image: externref) {
-//     panic("Image failed to load");
-// }
+@[ffi_export("image_onload_callback")]
+fun image_onload_callback(image: JsRef, context: JsRef) {
+    js_context_draw_image(context, image, 0, 0);
+}
+
+@[ffi_export("image_onerror_callback")]
+fun image_onerror_callback(image: JsRef) {
+    panic("Image failed to load");
+}
+
 // fun fetch_json(path: string) {
 //     let window = js_window();
 //     let resp = js_fetch(window, path);
