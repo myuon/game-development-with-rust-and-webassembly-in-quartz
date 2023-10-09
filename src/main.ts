@@ -25,6 +25,10 @@ const insert = (store: any[], value: any) => {
   return store.length - 1;
 };
 
+const get = <T>(store: any[], id: number) => {
+  return store[id] as T;
+};
+
 const init = async () => {
   instance = await mainModule({
     env: {
@@ -40,18 +44,19 @@ const init = async () => {
         console.log(readJsString(ciovec));
       },
       window: () => {
-        const id = insert(store, window);
-        return id;
+        // dummy
+        return 0;
       },
-      window_document: (window: Window) => {
-        console.log(window);
-        return window.document;
+      window_document: (_windowId: number) => {
+        // dummy
+        return 0;
       },
-      document_get_element_by_id: (document: Document, id: number) => {
+      document_get_element_by_id: (_documentId: number, id: number) => {
         const idStr = readJsString(id);
-        return document.getElementById(idStr);
+        return insert(store, document.getElementById(idStr));
       },
-      canvas_get_context: (canvas: HTMLCanvasElement, context: number) => {
+      canvas_get_context: (canvasId: number, context: number) => {
+        const canvas = get<HTMLCanvasElement>(store, canvasId);
         return canvas.getContext(readJsString(context));
       },
       context_move_to: (

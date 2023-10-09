@@ -109,9 +109,9 @@ fun main() {
     js_console_log("Hello, Wasm!");
 
     let window = js_window();
-    // let document = js_window_document(window);
-    // let canvas = js_document_get_element_by_id(document, "canvas");
-    // let context = js_canvas_get_context(canvas, "2d");
+    let document = js_window_document(window);
+    let canvas = js_document_get_element_by_id(document, "canvas");
+    let context = js_canvas_get_context(canvas, "2d");
 
     // sierpinski(
     //     context,

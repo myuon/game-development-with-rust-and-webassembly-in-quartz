@@ -2,6 +2,14 @@ struct JsRef {
     data: i32,
 }
 
+module JsRef {
+    fun new(data: i32): JsRef {
+        return JsRef {
+            data: data,
+        };
+    }
+}
+
 struct JsString {
     data: ptr[byte], // ciovec
 }
@@ -28,11 +36,11 @@ declare fun window(): i32;
 @[declare_params(window as wasm_i32, result as wasm_i32), declare_namespace("js")]
 declare fun window_document(window: i32): i32;
 
-@[declare_params(document as wasm_externref, id as wasm_i32, result as wasm_externref), declare_namespace("js")]
-declare fun document_get_element_by_id(document: externref, id: ptr[byte]): externref;
+@[declare_params(document as wasm_i32, id as wasm_i32, result as wasm_i32), declare_namespace("js")]
+declare fun document_get_element_by_id(document: i32, id: ptr[byte]): i32;
 
-@[declare_params(canvas as wasm_externref, context as wasm_i32, result as wasm_externref), declare_namespace("js")]
-declare fun canvas_get_context(canvas: externref, context: ptr[byte]): externref;
+@[declare_params(canvas as wasm_i32, context as wasm_i32, result as wasm_i32), declare_namespace("js")]
+declare fun canvas_get_context(canvas: i32, context: ptr[byte]): i32;
 
 @[declare_params(context as wasm_externref, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun context_move_to(context: externref, x: i32, y: i32);
@@ -100,12 +108,14 @@ fun js_window_document(window: JsRef): JsRef {
     };
 }
 
-// fun js_document_get_element_by_id(document: externref, id: string): externref {
-//     return _document_get_element_by_id(document, JsString::new(id).data);
-// }
-// fun js_canvas_get_context(canvas: externref, context: string): externref {
-//     return _canvas_get_context(canvas, JsString::new(context).data);
-// }
+fun js_document_get_element_by_id(document: JsRef, id: string): JsRef {
+    return JsRef::new(_document_get_element_by_id(document.data, JsString::new(id).data));
+}
+
+fun js_canvas_get_context(canvas: JsRef, context: string): JsRef {
+    return JsRef::new(_canvas_get_context(canvas.data, JsString::new(context).data));
+}
+
 // fun js_context_move_to(context: externref, x: i32, y: i32) {
 //     _context_move_to(context, x, y);
 // }
