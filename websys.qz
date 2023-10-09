@@ -42,26 +42,26 @@ declare fun document_get_element_by_id(document: i32, id: ptr[byte]): i32;
 @[declare_params(canvas as wasm_i32, context as wasm_i32, result as wasm_i32), declare_namespace("js")]
 declare fun canvas_get_context(canvas: i32, context: ptr[byte]): i32;
 
-@[declare_params(context as wasm_externref, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun context_move_to(context: externref, x: i32, y: i32);
+@[declare_params(context as wasm_i32, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_move_to(context: i32, x: i32, y: i32);
 
-@[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
-declare fun context_begin_path(context: externref);
+@[declare_params(context as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_begin_path(context: i32);
 
-@[declare_params(context as wasm_externref, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun context_line_to(context: externref, x: i32, y: i32);
+@[declare_params(context as wasm_i32, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_line_to(context: i32, x: i32, y: i32);
 
-@[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
-declare fun context_stroke(context: externref);
+@[declare_params(context as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_stroke(context: i32);
 
-@[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
-declare fun context_fill(context: externref);
+@[declare_params(context as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_fill(context: i32);
 
-@[declare_params(context as wasm_externref, result as wasm_void), declare_namespace("js")]
-declare fun context_close_path(context: externref);
+@[declare_params(context as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_close_path(context: i32);
 
-@[declare_params(context as wasm_externref, style as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun context_set_fill_style(context: externref, style: ptr[byte]);
+@[declare_params(context as wasm_i32, style as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_set_fill_style(context: i32, style: ptr[byte]);
 
 @[declare_params(min as wasm_i32, max as wasm_i32, result as wasm_i32), declare_namespace("js")]
 declare fun math_random_minmax(min: i32, max: i32): i32;
@@ -116,30 +116,38 @@ fun js_canvas_get_context(canvas: JsRef, context: string): JsRef {
     return JsRef::new(_canvas_get_context(canvas.data, JsString::new(context).data));
 }
 
-// fun js_context_move_to(context: externref, x: i32, y: i32) {
-//     _context_move_to(context, x, y);
-// }
-// fun js_context_begin_path(context: externref) {
-//     _context_begin_path(context);
-// }
-// fun js_context_line_to(context: externref, x: i32, y: i32) {
-//     _context_line_to(context, x, y);
-// }
-// fun js_context_stroke(context: externref) {
-//     _context_stroke(context);
-// }
-// fun js_context_fill(context: externref) {
-//     _context_fill(context);
-// }
-// fun js_context_close_path(context: externref) {
-//     _context_close_path(context);
-// }
-// fun js_context_set_fill_style(context: externref, style: string) {
-//     _context_set_fill_style(context, JsString::new(style).data);
-// }
-// fun js_math_random_minmax(min: i32, max: i32): i32 {
-//     return _math_random_minmax(min, max);
-// }
+fun js_context_move_to(context: JsRef, x: i32, y: i32) {
+    _context_move_to(context.data, x, y);
+}
+
+fun js_context_begin_path(context: JsRef) {
+    _context_begin_path(context.data);
+}
+
+fun js_context_line_to(context: JsRef, x: i32, y: i32) {
+    _context_line_to(context.data, x, y);
+}
+
+fun js_context_stroke(context: JsRef) {
+    _context_stroke(context.data);
+}
+
+fun js_context_fill(context: JsRef) {
+    _context_fill(context.data);
+}
+
+fun js_context_close_path(context: JsRef) {
+    _context_close_path(context.data);
+}
+
+fun js_context_set_fill_style(context: JsRef, style: string) {
+    _context_set_fill_style(context.data, JsString::new(style).data);
+}
+
+fun js_math_random_minmax(min: i32, max: i32): i32 {
+    return _math_random_minmax(min, max);
+}
+
 // fun js_image_new(): externref {
 //     return _image_new();
 // }

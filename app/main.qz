@@ -6,30 +6,31 @@ struct Color {
     b: i32,
 }
 
-// fun draw_triangle(
-//     context: externref,
-//     points: vec[struct {
-//         x: i32,
-//         y: i32,
-//     }],
-//     color: Color,
-// ) {
-//     js_context_set_fill_style(
-//         context,
-//         "rgb({}, {}, {})".format(color.r.to_string(), color.g.to_string(), color.b.to_string()),
-//     );
-//     let top = points.at(0);
-//     let left = points.at(1);
-//     let right = points.at(2);
-//     js_context_move_to(context, top.x, top.y);
-//     js_context_begin_path(context);
-//     js_context_line_to(context, left.x, left.y);
-//     js_context_line_to(context, right.x, right.y);
-//     js_context_line_to(context, top.x, top.y);
-//     js_context_close_path(context);
-//     js_context_stroke(context);
-//     js_context_fill(context);
-// }
+fun draw_triangle(
+    context: JsRef,
+    points: vec[struct {
+        x: i32,
+        y: i32,
+    }],
+    color: Color,
+) {
+    js_context_set_fill_style(
+        context,
+        "rgb({}, {}, {})".format(color.r.to_string(), color.g.to_string(), color.b.to_string()),
+    );
+    let top = points.at(0);
+    let left = points.at(1);
+    let right = points.at(2);
+    js_context_move_to(context, top.x, top.y);
+    js_context_begin_path(context);
+    js_context_line_to(context, left.x, left.y);
+    js_context_line_to(context, right.x, right.y);
+    js_context_line_to(context, top.x, top.y);
+    js_context_close_path(context);
+    js_context_stroke(context);
+    js_context_fill(context);
+}
+
 fun midpoint(
     point1: struct {
         x: i32,
@@ -50,7 +51,7 @@ fun midpoint(
 }
 
 fun sierpinski(
-    context: externref,
+    context: JsRef,
     points: vec[struct {
         x: i32,
         y: i32,
@@ -58,51 +59,51 @@ fun sierpinski(
     color: Color,
     depth: i32,
 ) {
-    // draw_triangle(context, points, color);
+    draw_triangle(context, points, color);
 
-    // let top = points.at(0);
-    // let left = points.at(1);
-    // let right = points.at(2);
+    let top = points.at(0);
+    let left = points.at(1);
+    let right = points.at(2);
 
-    // let depth_new = depth - 1;
-    // if depth_new > 0 {
-    //     let next_color = Color {
-    //         r: js_math_random_minmax(0, 255),
-    //         g: js_math_random_minmax(0, 255),
-    //         b: js_math_random_minmax(0, 255),
-    //     };
+    let depth_new = depth - 1;
+    if depth_new > 0 {
+        let next_color = Color {
+            r: js_math_random_minmax(0, 255),
+            g: js_math_random_minmax(0, 255),
+            b: js_math_random_minmax(0, 255),
+        };
 
-    //     let left_middle = midpoint(top, left);
-    //     let right_middle = midpoint(top, right);
-    //     let bottom_middle = midpoint(left, right);
-    //     sierpinski(
-    //         context,
-    //         make[vec[struct {
-    //             x: i32,
-    //             y: i32,
-    //         }]](top, left_middle, right_middle),
-    //         next_color,
-    //         depth_new,
-    //     );
-    //     sierpinski(
-    //         context,
-    //         make[vec[struct {
-    //             x: i32,
-    //             y: i32,
-    //         }]](left_middle, left, bottom_middle),
-    //         next_color,
-    //         depth_new,
-    //     );
-    //     sierpinski(
-    //         context,
-    //         make[vec[struct {
-    //             x: i32,
-    //             y: i32,
-    //         }]](right_middle, bottom_middle, right),
-    //         next_color,
-    //         depth_new,
-    //     );
-    // }
+        let left_middle = midpoint(top, left);
+        let right_middle = midpoint(top, right);
+        let bottom_middle = midpoint(left, right);
+        sierpinski(
+            context,
+            make[vec[struct {
+                x: i32,
+                y: i32,
+            }]](top, left_middle, right_middle),
+            next_color,
+            depth_new,
+        );
+        sierpinski(
+            context,
+            make[vec[struct {
+                x: i32,
+                y: i32,
+            }]](left_middle, left, bottom_middle),
+            next_color,
+            depth_new,
+        );
+        sierpinski(
+            context,
+            make[vec[struct {
+                x: i32,
+                y: i32,
+            }]](right_middle, bottom_middle, right),
+            next_color,
+            depth_new,
+        );
+    }
 }
 
 fun main() {
@@ -113,32 +114,32 @@ fun main() {
     let canvas = js_document_get_element_by_id(document, "canvas");
     let context = js_canvas_get_context(canvas, "2d");
 
-    // sierpinski(
-    //     context,
-    //     make[vec[struct {
-    //         x: i32,
-    //         y: i32,
-    //     }]](
-    //         struct {
-    //             x: 300,
-    //             y: 0,
-    //         },
-    //         struct {
-    //             x: 0,
-    //             y: 600,
-    //         },
-    //         struct {
-    //             x: 600,
-    //             y: 600,
-    //         },
-    //     ),
-    //     Color {
-    //         r: 0,
-    //         g: 255,
-    //         b: 0,
-    //     },
-    //     5,
-    // );
+    sierpinski(
+        context,
+        make[vec[struct {
+            x: i32,
+            y: i32,
+        }]](
+            struct {
+                x: 300,
+                y: 0,
+            },
+            struct {
+                x: 0,
+                y: 600,
+            },
+            struct {
+                x: 600,
+                y: 600,
+            },
+        ),
+        Color {
+            r: 0,
+            g: 255,
+            b: 0,
+        },
+        5,
+    );
 
     // let image = js_image_new();
     // js_image_set_src(image, "assets/Idle (1).png");

@@ -57,38 +57,34 @@ const init = async () => {
       },
       canvas_get_context: (canvasId: number, context: number) => {
         const canvas = get<HTMLCanvasElement>(store, canvasId);
-        return canvas.getContext(readJsString(context));
+        return insert(store, canvas.getContext(readJsString(context)));
       },
-      context_move_to: (
-        context: CanvasRenderingContext2D,
-        x: number,
-        y: number
-      ) => {
+      context_move_to: (contextId: number, x: number, y: number) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
         context.moveTo(x, y);
       },
-      context_begin_path: (context: CanvasRenderingContext2D) => {
+      context_begin_path: (contextId: number) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
         context.beginPath();
       },
-      context_line_to: (
-        context: CanvasRenderingContext2D,
-        x: number,
-        y: number
-      ) => {
+      context_line_to: (contextId: number, x: number, y: number) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
         context.lineTo(x, y);
       },
-      context_stroke: (context: CanvasRenderingContext2D) => {
+      context_stroke: (contextId: number) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
         context.stroke();
       },
-      context_fill: (context: CanvasRenderingContext2D) => {
+      context_fill: (contextId: number) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
         context.fill();
       },
-      context_close_path: (context: CanvasRenderingContext2D) => {
+      context_close_path: (contextId: number) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
         context.closePath();
       },
-      context_set_fill_style: (
-        context: CanvasRenderingContext2D,
-        fillStyle: number
-      ) => {
+      context_set_fill_style: (contextId: number, fillStyle: number) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
         context.fillStyle = readJsString(fillStyle);
       },
       math_random_minmax: (min: number, max: number) => {
