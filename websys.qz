@@ -1,3 +1,7 @@
+struct JsRef {
+    data: i32,
+}
+
 struct JsString {
     data: ptr[byte], // ciovec
 }
@@ -18,11 +22,11 @@ module JsString {
 @[declare_params(message as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun console_log(message: ptr[byte]);
 
-@[declare_params(result as wasm_externref), declare_namespace("js")]
-declare fun window(): externref;
+@[declare_params(result as wasm_i32), declare_namespace("js")]
+declare fun window(): i32;
 
-@[declare_params(window as wasm_externref, result as wasm_externref), declare_namespace("js")]
-declare fun window_document(window: externref): externref;
+@[declare_params(window as wasm_i32, result as wasm_i32), declare_namespace("js")]
+declare fun window_document(window: i32): i32;
 
 @[declare_params(document as wasm_externref, id as wasm_i32, result as wasm_externref), declare_namespace("js")]
 declare fun document_get_element_by_id(document: externref, id: ptr[byte]): externref;
@@ -84,83 +88,72 @@ fun js_console_log(message: string) {
     _console_log(JsString::new(message).data);
 }
 
-fun js_window(): externref {
-    return _window();
+fun js_window(): JsRef {
+    return JsRef {
+        data: _window(),
+    };
 }
 
-fun js_window_document(window: externref): externref {
-    return _window_document(window);
+fun js_window_document(window: JsRef): JsRef {
+    return JsRef {
+        data: _window_document(window.data),
+    };
 }
 
-fun js_document_get_element_by_id(document: externref, id: string): externref {
-    return _document_get_element_by_id(document, JsString::new(id).data);
-}
-
-fun js_canvas_get_context(canvas: externref, context: string): externref {
-    return _canvas_get_context(canvas, JsString::new(context).data);
-}
-
-fun js_context_move_to(context: externref, x: i32, y: i32) {
-    _context_move_to(context, x, y);
-}
-
-fun js_context_begin_path(context: externref) {
-    _context_begin_path(context);
-}
-
-fun js_context_line_to(context: externref, x: i32, y: i32) {
-    _context_line_to(context, x, y);
-}
-
-fun js_context_stroke(context: externref) {
-    _context_stroke(context);
-}
-
-fun js_context_fill(context: externref) {
-    _context_fill(context);
-}
-
-fun js_context_close_path(context: externref) {
-    _context_close_path(context);
-}
-
-fun js_context_set_fill_style(context: externref, style: string) {
-    _context_set_fill_style(context, JsString::new(style).data);
-}
-
-fun js_math_random_minmax(min: i32, max: i32): i32 {
-    return _math_random_minmax(min, max);
-}
-
-fun js_image_new(): externref {
-    return _image_new();
-}
-
-fun js_image_set_src(image: externref, src: string) {
-    _image_set_src(image, JsString::new(src).data);
-}
-
-fun js_context_draw_image(context: externref, image: externref, x: i32, y: i32) {
-    _context_draw_image(context, image, x, y);
-}
-
-fun js_image_set_onload(image: externref, callback_name: string) {
-    _image_set_onload(image, JsString::new(callback_name).data);
-}
-
-fun js_image_set_onload_externref1(image: externref, callback_name: string, arg1: externref) {
-    _image_set_onload_externref1(image, JsString::new(callback_name).data, arg1);
-}
-
-fun js_image_set_onerror(image: externref, callback_name: string) {
-    _image_set_onerror(image, JsString::new(callback_name).data);
-}
-
-fun js_fetch(window: externref, url: string): externref {
-    return _fetch(window, JsString::new(url).data);
-}
-
-fun js_response_text(response: externref): i32 {
-    return _response_text(response);
+// fun js_document_get_element_by_id(document: externref, id: string): externref {
+//     return _document_get_element_by_id(document, JsString::new(id).data);
+// }
+// fun js_canvas_get_context(canvas: externref, context: string): externref {
+//     return _canvas_get_context(canvas, JsString::new(context).data);
+// }
+// fun js_context_move_to(context: externref, x: i32, y: i32) {
+//     _context_move_to(context, x, y);
+// }
+// fun js_context_begin_path(context: externref) {
+//     _context_begin_path(context);
+// }
+// fun js_context_line_to(context: externref, x: i32, y: i32) {
+//     _context_line_to(context, x, y);
+// }
+// fun js_context_stroke(context: externref) {
+//     _context_stroke(context);
+// }
+// fun js_context_fill(context: externref) {
+//     _context_fill(context);
+// }
+// fun js_context_close_path(context: externref) {
+//     _context_close_path(context);
+// }
+// fun js_context_set_fill_style(context: externref, style: string) {
+//     _context_set_fill_style(context, JsString::new(style).data);
+// }
+// fun js_math_random_minmax(min: i32, max: i32): i32 {
+//     return _math_random_minmax(min, max);
+// }
+// fun js_image_new(): externref {
+//     return _image_new();
+// }
+// fun js_image_set_src(image: externref, src: string) {
+//     _image_set_src(image, JsString::new(src).data);
+// }
+// fun js_context_draw_image(context: externref, image: externref, x: i32, y: i32) {
+//     _context_draw_image(context, image, x, y);
+// }
+// fun js_image_set_onload(image: externref, callback_name: string) {
+//     _image_set_onload(image, JsString::new(callback_name).data);
+// }
+// fun js_image_set_onload_externref1(image: externref, callback_name: string, arg1: externref) {
+//     _image_set_onload_externref1(image, JsString::new(callback_name).data, arg1);
+// }
+// fun js_image_set_onerror(image: externref, callback_name: string) {
+//     _image_set_onerror(image, JsString::new(callback_name).data);
+// }
+// fun js_fetch(window: externref, url: string): externref {
+//     return _fetch(window, JsString::new(url).data);
+// }
+// fun js_response_text(response: externref): i32 {
+//     return _response_text(response);
+// }
+fun m() {
 }
 

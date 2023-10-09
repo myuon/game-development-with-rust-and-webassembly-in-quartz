@@ -18,6 +18,13 @@ const readJsString = (ciovec: number): string => {
   return new TextDecoder().decode(data);
 };
 
+let store: any[] = [];
+
+const insert = (store: any[], value: any) => {
+  store.push(value);
+  return store.length - 1;
+};
+
 const init = async () => {
   instance = await mainModule({
     env: {
@@ -33,7 +40,8 @@ const init = async () => {
         console.log(readJsString(ciovec));
       },
       window: () => {
-        return window;
+        const id = insert(store, window);
+        return id;
       },
       window_document: (window: Window) => {
         console.log(window);
