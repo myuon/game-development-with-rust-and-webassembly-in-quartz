@@ -84,11 +84,8 @@ declare fun image_set_onload_ref1(image: i32, callback: ptr[byte], arg1: i32);
 @[declare_params(image as wasm_i32, callback as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun image_set_onerror(image: i32, callback: ptr[byte]);
 
-@[declare_params(window as wasm_externref, url as wasm_i32, result as wasm_externref), declare_namespace("js")]
-declare fun fetch(window: externref, url: ptr[byte]): externref;
-
-@[declare_params(response as wasm_externref, result as wasm_i32), declare_namespace("js")]
-declare fun response_text(response: externref): i32;
+@[declare_params(url as wasm_i32, callback as wasm_i32, result as wasm_i32), declare_namespace("js")]
+declare fun fetch(url: ptr[byte], callback: ptr[byte]): i32;
 
 // ----
 // js library
@@ -172,11 +169,7 @@ fun js_image_set_onerror(image: JsRef, callback_name: string) {
     _image_set_onerror(image.data, JsString::new(callback_name).data);
 }
 
-// fun js_fetch(window: externref, url: string): externref {
-//     return _fetch(window, JsString::new(url).data);
-// }
-// fun js_response_text(response: externref): i32 {
-//     return _response_text(response);
-// }
-fun m() {
+fun js_fetch(url: string, callback_name: string): JsRef {
+    return JsRef::new(_fetch(JsString::new(url).data, JsString::new(callback_name).data));
 }
+

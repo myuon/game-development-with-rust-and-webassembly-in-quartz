@@ -144,9 +144,9 @@ fun main() {
     let image = js_image_new();
     js_image_set_src(image, "assets/Idle (1).png");
     js_image_set_onload_ref1(image, "image_onload_callback", context);
-    // js_image_set_onerror(image, "image_onerror_callback");
+    js_image_set_onerror(image, "image_onerror_callback");
 
-    // fetch_json("assets/rhb.json");
+    fetch_json("assets/rhb.json", "rhb_json_fetch_onsuccess");
 
     // return context;
     return nil;
@@ -162,11 +162,12 @@ fun image_onerror_callback(image: JsRef) {
     panic("Image failed to load");
 }
 
-// fun fetch_json(path: string) {
-//     let window = js_window();
-//     let resp = js_fetch(window, path);
-//     let json = js_response_text(resp);
-// }
-fun f() {
+fun fetch_json(path: string, callback: string) {
+    js_fetch(path, callback);
+}
+
+@[ffi_export("rhb_json_fetch_onsuccess")]
+fun rhb_json_fetch_onsuccess(resp_id: i32) {
+    println("fetched");
 }
 

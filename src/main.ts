@@ -124,7 +124,8 @@ const init = async () => {
           );
         };
       },
-      image_set_onerror: (image: HTMLImageElement, callbackName: number) => {
+      image_set_onerror: (imageId: number, callbackName: number) => {
+        const image = get<HTMLImageElement>(store, imageId);
         image.onerror = () => {
           const callback = instance.exports[
             readJsString(callbackName)
@@ -143,11 +144,17 @@ const init = async () => {
         const image = get<HTMLImageElement>(store, imageId);
         context.drawImage(image, x, y);
       },
-      fetch: (url: number) => {
-        return fetch(readJsString(url));
-      },
-      response_text: (response: Response) => {
-        return response.text();
+      fetch: async (url: number, onSuccess: number) => {
+        const resp = await fetch(readJsString(url));
+        if (resp.ok) {
+          const text = await resp.text();
+
+          const callback = instance.exports[
+            readJsString(onSuccess)
+          ] as CallableFunction;
+
+          callback(BigInt(insert(store, text)) << BigInt(32));
+        }
       },
     },
     wasi_snapshot_preview1: {
