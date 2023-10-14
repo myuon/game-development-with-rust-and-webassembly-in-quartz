@@ -153,8 +153,8 @@ fun main() {
 }
 
 @[ffi_export("image_onload_callback")]
-fun image_onload_callback(image: JsRef, context: JsRef) {
-    js_context_draw_image(context, image, 0, 0);
+fun image_onload_callback(context: i32, image: i32) {
+    js_context_draw_image(JsRef::new(context), JsRef::new(image), 0, 0);
 }
 
 @[ffi_export("image_onerror_callback")]

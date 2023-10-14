@@ -118,7 +118,10 @@ const init = async () => {
             readJsString(callbackName)
           ] as CallableFunction;
 
-          callback(BigInt(imageId << 32), BigInt(contextId << 32));
+          callback(
+            BigInt(contextId) << BigInt(32),
+            BigInt(imageId) << BigInt(32)
+          );
         };
       },
       image_set_onerror: (image: HTMLImageElement, callbackName: number) => {
