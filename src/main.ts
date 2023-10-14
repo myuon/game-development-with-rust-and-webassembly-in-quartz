@@ -185,6 +185,7 @@ const init = async () => {
       environ_get: () => {},
       args_sizes_get: () => {},
       args_get: () => {},
+      clock_time_get: () => {},
     },
   });
   const main = instance.exports.main as CallableFunction;
