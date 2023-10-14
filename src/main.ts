@@ -18,6 +18,16 @@ const readJsString = (ciovec: number): string => {
   return new TextDecoder().decode(data);
 };
 
+const writeJsString = (value: string, address: number, length: number) => {
+  const mem = getMemoryView();
+
+  const data = new Uint8Array(mem.buffer, address, length);
+
+  const encoded = new TextEncoder().encode(value);
+
+  data.set(encoded);
+};
+
 let store: any[] = [];
 
 const insert = (store: any[], value: any) => {
@@ -34,6 +44,7 @@ const init = async () => {
     env: {
       debug: (output: unknown) => {
         console.log(`debug: ${output}`);
+        return BigInt(0);
       },
       abort: () => {
         throw new Error("=== abort ===");
@@ -155,6 +166,14 @@ const init = async () => {
 
           callback(BigInt(insert(store, text)) << BigInt(32));
         }
+      },
+      jsvalue_string_length: (jsvalueId: number) => {
+        let value = get<string>(store, jsvalueId);
+        return value.length;
+      },
+      jsvalue_string_set: (jsvalueId: number, data: number, length: number) => {
+        let value = get<string>(store, jsvalueId);
+        writeJsString(value, data, length);
       },
     },
     wasi_snapshot_preview1: {

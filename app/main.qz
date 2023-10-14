@@ -158,7 +158,7 @@ fun image_onload_callback(context: i32, image: i32) {
 }
 
 @[ffi_export("image_onerror_callback")]
-fun image_onerror_callback(image: JsRef) {
+fun image_onerror_callback(image: i32) {
     panic("Image failed to load");
 }
 
@@ -168,6 +168,9 @@ fun fetch_json(path: string, callback: string) {
 
 @[ffi_export("rhb_json_fetch_onsuccess")]
 fun rhb_json_fetch_onsuccess(resp_id: i32) {
-    println("fetched");
+    let ref = JsRef::new(resp_id);
+    let text = jsstring(ref);
+
+    println("text: {}", text);
 }
 

@@ -87,6 +87,12 @@ declare fun image_set_onerror(image: i32, callback: ptr[byte]);
 @[declare_params(url as wasm_i32, callback as wasm_i32, result as wasm_i32), declare_namespace("js")]
 declare fun fetch(url: ptr[byte], callback: ptr[byte]): i32;
 
+@[declare_params(ref as wasm_i32, result as wasm_i32), declare_namespace("js")]
+declare fun jsvalue_string_length(ref: i32): i32;
+
+@[declare_params(ref as wasm_i32, data as wasm_i32, length as wasm_i32, result as wasm_i32), declare_namespace("js")]
+declare fun jsvalue_string_set(ref: i32, data: ptr[byte], length: i32): i32;
+
 // ----
 // js library
 fun js_console_log(message: string) {
@@ -171,5 +177,21 @@ fun js_image_set_onerror(image: JsRef, callback_name: string) {
 
 fun js_fetch(url: string, callback_name: string): JsRef {
     return JsRef::new(_fetch(JsString::new(url).data, JsString::new(callback_name).data));
+}
+
+fun js_jsstring_length(ref: JsRef): i32 {
+    return _jsvalue_string_length(ref.data);
+}
+
+fun js_jsstring_set(ref: JsRef, p: ptr[byte], length: i32): i32 {
+    return _jsvalue_string_set(ref.data, p, length);
+}
+
+fun jsstring(ref: JsRef): string {
+    let length = js_jsstring_length(ref);
+    let str_p = make[ptr[byte]](length);
+    js_jsstring_set(ref, str_p, length);
+
+    return new_string(str_p, length);
 }
 
