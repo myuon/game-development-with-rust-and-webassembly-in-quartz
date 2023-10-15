@@ -172,7 +172,114 @@ fun rhb_json_fetch_onsuccess(resp_id: i32) {
     let ref = JsRef::new(resp_id);
     let text = jsstring(ref);
 
-    let j = Json::from_string(text);
-    println(derive::to_string(j));
+    let j or err = Json::from_string(text);
+    if err != nil {
+        panic("Failed to parse JSON: {}", derive::to_string(err));
+    }
+
+    let sheet = Sheet::from_json(j!);
+
+    println(derive::to_string(sheet));
+}
+
+struct Sheet {
+    frames: map[string, Cell],
+}
+
+module Sheet {
+    fun from_json(j: Json): Sheet {
+        if j.t_object == nil {
+            panic("Expected object, got {}", derive::to_string(j));
+        }
+
+        let obj = j.t_object!;
+
+        let obj_frames = obj.("frames");
+        if obj_frames.t_object == nil {
+            panic("Expected object, got {}", derive::to_string(obj_frames));
+        }
+
+        let obj_frames_obj = obj_frames.t_object!;
+
+        let frames = make[map[string, Cell]]();
+
+        for key in obj_frames_obj.list_keys() {
+            let value = obj_frames_obj.(key);
+            let cell = Cell::from_json(value);
+            frames.(key) = cell;
+        }
+
+        return Sheet {
+            frames: frames,
+        };
+    }
+}
+
+struct Cell {
+    frame: Rect,
+}
+
+module Cell {
+    fun from_json(j: Json): Cell {
+        if j.t_object == nil {
+            panic("Expected object, got {}", derive::to_string(j));
+        }
+
+        let obj = j.t_object!;
+
+        let obj_frame = obj.("frame");
+        let frame or err = Rect::from_json(obj_frame);
+        if err != nil {
+            panic("Failed to parse frame: {}", derive::to_string(err));
+        }
+
+        return Cell {
+            frame: frame!,
+        };
+    }
+}
+
+struct Rect {
+    x: i32,
+    y: i32,
+    w: i32,
+    h: i32,
+}
+
+module Rect {
+    fun from_json(j: Json): Rect or error {
+        if j.t_object == nil {
+            return _ or error::new("Expected object, got {}".format(derive::to_string(j)));
+        }
+
+        let obj = j.t_object!;
+
+        let obj_x = obj.("x");
+        if obj_x.t_i32 == nil {
+            return _ or error::new("Expected number, got {}".format(derive::to_string(obj_x)));
+        }
+
+        let obj_y = obj.("y");
+        if obj_y.t_i32 == nil {
+            return _ or error::new("Expected number, got {}".format(derive::to_string(obj_y)));
+        }
+
+        let obj_w = obj.("w");
+        if obj_w.t_i32 == nil {
+            return _ or error::new("Expected number, got {}".format(derive::to_string(obj_w)));
+        }
+
+        let obj_h = obj.("h");
+        if obj_h.t_i32 == nil {
+            return _ or error::new("Expected number, got {}".format(derive::to_string(obj_h)));
+        }
+
+        return Rect {
+            x: obj_x.t_i32!,
+            y: obj_y.t_i32!,
+            w: obj_w.t_i32!,
+            h: obj_h.t_i32!,
+        };
+    }
 }
 
