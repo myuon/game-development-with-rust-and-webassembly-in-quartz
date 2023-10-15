@@ -1,4 +1,5 @@
 import websys;
+import json;
 
 struct Color {
     r: i32,
@@ -171,6 +172,7 @@ fun rhb_json_fetch_onsuccess(resp_id: i32) {
     let ref = JsRef::new(resp_id);
     let text = jsstring(ref);
 
-    println("text: {}", text);
+    let j = Json::from_string(text);
+    println(derive::to_string(j));
 }
 
