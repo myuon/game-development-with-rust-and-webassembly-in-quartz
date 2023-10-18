@@ -84,6 +84,9 @@ declare fun image_set_onload_ref1(image: i32, callback: ptr[byte], arg1: i32);
 @[declare_params(image as wasm_i32, callback as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun image_set_onerror(image: i32, callback: ptr[byte]);
 
+@[declare_params(image as wasm_i32, c as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun image_set_onerror_closure(image: i32, c: any);
+
 @[declare_params(url as wasm_i32, callback as wasm_i32, result as wasm_i32), declare_namespace("js")]
 declare fun fetch(url: ptr[byte], callback: ptr[byte]): i32;
 
@@ -173,6 +176,10 @@ fun js_image_set_onload_ref1(image: JsRef, callback_name: string, arg1: JsRef) {
 
 fun js_image_set_onerror(image: JsRef, callback_name: string) {
     _image_set_onerror(image.data, JsString::new(callback_name).data);
+}
+
+fun js_image_set_onerror_closure(image: JsRef, c: any) {
+    _image_set_onerror_closure(image.data, c);
 }
 
 fun js_fetch(url: string, callback_name: string): JsRef {

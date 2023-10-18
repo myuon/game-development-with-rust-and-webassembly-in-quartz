@@ -179,7 +179,20 @@ fun rhb_json_fetch_onsuccess(resp_id: i32) {
 
     let sheet = Sheet::from_json(j!);
 
-    println(derive::to_string(sheet));
+    let image = js_image_new();
+    js_image_set_src(image, "assets/Idle (1).png");
+    // js_image_set_onload_ref1(image, "draw_rhb", context);
+    js_image_set_onerror_closure(
+        image,
+        fun () {
+            panic("Image failed to load");
+        },
+    );
+}
+
+@[ffi_export("draw_rhb")]
+fun draw_rhb(context: i32, image: i32) {
+    //
 }
 
 struct Sheet {
@@ -281,5 +294,10 @@ module Rect {
             h: obj_h.t_i32!,
         };
     }
+}
+
+@[ffi_export("call_closure")]
+fun call_closure(callback: fun[(), nil]) {
+    callback();
 }
 

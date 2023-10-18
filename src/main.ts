@@ -145,6 +145,14 @@ const init = async () => {
           callback();
         };
       },
+      image_set_onerror_closure: (imageId: number, closure: number) => {
+        const image = get<HTMLImageElement>(store, imageId);
+        image.onerror = () => {
+          const callback = instance.exports["call_closure"] as CallableFunction;
+
+          callback(BigInt(closure));
+        };
+      },
       context_draw_image: (
         contextId: number,
         imageId: number,
