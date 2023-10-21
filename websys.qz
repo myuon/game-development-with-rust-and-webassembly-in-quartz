@@ -78,17 +78,11 @@ declare fun context_draw_image(context: i32, image: i32, x: i32, y: i32);
 @[declare_params(image as wasm_i32, callback as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun image_set_onload(image: i32, callback: any);
 
-@[declare_params(image as wasm_i32, callback as wasm_i32, arg1 as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun image_set_onload_ref1(image: i32, callback: ptr[byte], arg1: i32);
-
 @[declare_params(image as wasm_i32, callback as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun image_set_onerror(image: i32, callback: ptr[byte]);
-
-@[declare_params(image as wasm_i32, c as wasm_i32, result as wasm_void), declare_namespace("js")]
-declare fun image_set_onerror_closure(image: i32, c: any);
+declare fun image_set_onerror(image: i32, callback: any);
 
 @[declare_params(url as wasm_i32, callback as wasm_i32, result as wasm_i32), declare_namespace("js")]
-declare fun fetch(url: ptr[byte], callback: ptr[byte]): i32;
+declare fun fetch(url: ptr[byte], callback: any): i32;
 
 @[declare_params(ref as wasm_i32, result as wasm_i32), declare_namespace("js")]
 declare fun jsvalue_string_length(ref: i32): i32;
@@ -155,7 +149,12 @@ fun js_math_random_minmax(min: i32, max: i32): i32 {
 }
 
 fun js_image_new(): JsRef {
-    return JsRef::new(_image_new());
+    let i = _image_new();
+    println("js_image_new: {}", i.to_string());
+    let j = JsRef::new(i);
+    println("js_image_new: {}", j.data.to_string());
+
+    return j;
 }
 
 fun js_image_set_src(image: JsRef, src: string) {
@@ -166,24 +165,16 @@ fun js_context_draw_image(context: JsRef, image: JsRef, x: i32, y: i32) {
     _context_draw_image(context.data, image.data, x, y);
 }
 
-fun js_image_set_onload(image: JsRef, callback_name: string) {
-    _image_set_onload(image.data, JsString::new(callback_name).data);
+fun js_image_set_onload(image: JsRef, callback: fun[(), nil]) {
+    _image_set_onload(image.data, callback);
 }
 
-fun js_image_set_onload_ref1(image: JsRef, callback_name: string, arg1: JsRef) {
-    _image_set_onload_ref1(image.data, JsString::new(callback_name).data, arg1.data);
+fun js_image_set_onerror(image: JsRef, c: fun[(), nil]) {
+    _image_set_onerror(image.data, c);
 }
 
-fun js_image_set_onerror(image: JsRef, callback_name: string) {
-    _image_set_onerror(image.data, JsString::new(callback_name).data);
-}
-
-fun js_image_set_onerror_closure(image: JsRef, c: any) {
-    _image_set_onerror_closure(image.data, c);
-}
-
-fun js_fetch(url: string, callback_name: string): JsRef {
-    return JsRef::new(_fetch(JsString::new(url).data, JsString::new(callback_name).data));
+fun js_fetch(url: string, callback: fun[( i32), nil]): JsRef {
+    return JsRef::new(_fetch(JsString::new(url).data, callback));
 }
 
 fun js_jsstring_length(ref: JsRef): i32 {

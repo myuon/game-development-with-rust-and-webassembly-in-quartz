@@ -113,10 +113,11 @@ fun main() {
     let window = js_window();
     let document = js_window_document(window);
     let canvas = js_document_get_element_by_id(document, "canvas");
-    let context = js_canvas_get_context(canvas, "2d");
+    let context_ = js_canvas_get_context(canvas, "2d");
+    let context = context_;
 
     sierpinski(
-        context,
+        context_,
         make[vec[struct {
             x: i32,
             y: i32,
@@ -142,57 +143,56 @@ fun main() {
         5,
     );
 
-    let image = js_image_new();
-    js_image_set_src(image, "assets/Idle (1).png");
-    js_image_set_onload_ref1(image, "image_onload_callback", context);
-    js_image_set_onerror(image, "image_onerror_callback");
+    let image_ = js_image_new();
+    let image = image_;
+    js_image_set_src(image_, "assets/Idle (1).png");
+    js_image_set_onload(
+        image_,
+        fun () {
+            js_context_draw_image(context, image, 0, 0);
+        },
+    );
 
-    fetch_json("assets/rhb.json", "rhb_json_fetch_onsuccess");
-
-    // return context;
-    return nil;
-}
-
-@[ffi_export("image_onload_callback")]
-fun image_onload_callback(context: i32, image: i32) {
-    js_context_draw_image(JsRef::new(context), JsRef::new(image), 0, 0);
-}
-
-@[ffi_export("image_onerror_callback")]
-fun image_onerror_callback(image: i32) {
-    panic("Image failed to load");
-}
-
-fun fetch_json(path: string, callback: string) {
-    js_fetch(path, callback);
-}
-
-@[ffi_export("rhb_json_fetch_onsuccess")]
-fun rhb_json_fetch_onsuccess(resp_id: i32) {
-    let ref = JsRef::new(resp_id);
-    let text = jsstring(ref);
-
-    let j or err = Json::from_string(text);
-    if err != nil {
-        panic("Failed to parse JSON: {}", derive::to_string(err));
-    }
-
-    let sheet = Sheet::from_json(j!);
-
-    let image = js_image_new();
-    js_image_set_src(image, "assets/Idle (1).png");
-    // js_image_set_onload_ref1(image, "draw_rhb", context);
-    js_image_set_onerror_closure(
-        image,
+    js_image_set_onerror(
+        image_,
         fun () {
             panic("Image failed to load");
         },
     );
-}
 
-@[ffi_export("draw_rhb")]
-fun draw_rhb(context: i32, image: i32) {
-    //
+    println("js_fetch:before");
+
+    js_fetch(
+        "assets/rhb.json",
+        fun (resp_id: i32) {
+            let ref = JsRef::new(resp_id);
+            let text = jsstring(ref);
+
+            let j or err = Json::from_string(text);
+            if err != nil {
+                panic("Failed to parse JSON: {}", derive::to_string(err));
+            }
+
+            let sheet = Sheet::from_json(j!);
+
+            let image = js_image_new();
+            js_image_set_src(image, "assets/rhb.png");
+            // js_image_set_onload(
+            //     image,
+            //     fun () {
+            //         js_context_draw_image(context, image, 0, 0);
+            //     },
+            // );
+            // js_image_set_onerror(
+            //     image,
+            //     fun () {
+            //         panic("Image failed to load");
+            //     },
+            // );
+        },
+    );
+
+    return nil;
 }
 
 struct Sheet {
@@ -299,5 +299,10 @@ module Rect {
 @[ffi_export("call_closure")]
 fun call_closure(callback: fun[(), nil]) {
     callback();
+}
+
+@[ffi_export("call_closure_1")]
+fun call_closure_1(callback: fun[( any), nil], arg1: any) {
+    callback(arg1);
 }
 

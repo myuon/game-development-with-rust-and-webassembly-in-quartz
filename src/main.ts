@@ -42,8 +42,19 @@ const get = <T>(store: any[], id: number) => {
 const init = async () => {
   instance = await mainModule({
     env: {
-      debug: (output: unknown) => {
-        console.log(`debug: ${output}`);
+      debug: (output: bigint) => {
+        let tag = Number(output) & 0xf;
+        if (tag === 0) {
+          console.log(`debug[i32]: ${output >> BigInt(32)}`);
+        } else if (tag === 1) {
+          console.log(`debug[address]: ${output >> BigInt(32)}`);
+        } else if (tag === 2) {
+          console.log(`debug[bool]: ${output >> BigInt(32)}`);
+        } else if (tag === 4) {
+          console.log(`debug[byte]: ${output >> BigInt(32)}`);
+        } else {
+          console.log(`debug[tag=${tag}]: ${output >> BigInt(32)}`);
+        }
         return BigInt(0);
       },
       abort: () => {
@@ -102,55 +113,29 @@ const init = async () => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       },
       image_new: () => {
-        return insert(store, new Image());
+        let i = insert(store, new Image());
+        console.log(i);
+
+        return i;
       },
       image_set_src: (imageId: number, src: number) => {
         const image = get<HTMLImageElement>(store, imageId);
         image.src = readJsString(src);
       },
-      image_set_onload: (imageId: number, callbackName: number) => {
+      image_set_onload: (imageId: number, f: number) => {
         const image = get<HTMLImageElement>(store, imageId);
         image.onload = () => {
-          const callback = instance.exports[
-            readJsString(callbackName)
-          ] as CallableFunction;
+          const callback = instance.exports["call_closure"] as CallableFunction;
 
-          callback();
+          callback(BigInt(f) << BigInt(32));
         };
       },
-      image_set_onload_ref1: (
-        imageId: number,
-        callbackName: number,
-        contextId: number
-      ) => {
-        const image = get<HTMLImageElement>(store, imageId);
-        image.onload = () => {
-          const callback = instance.exports[
-            readJsString(callbackName)
-          ] as CallableFunction;
-
-          callback(
-            BigInt(contextId) << BigInt(32),
-            BigInt(imageId) << BigInt(32)
-          );
-        };
-      },
-      image_set_onerror: (imageId: number, callbackName: number) => {
-        const image = get<HTMLImageElement>(store, imageId);
-        image.onerror = () => {
-          const callback = instance.exports[
-            readJsString(callbackName)
-          ] as CallableFunction;
-
-          callback();
-        };
-      },
-      image_set_onerror_closure: (imageId: number, closure: number) => {
+      image_set_onerror: (imageId: number, f: number) => {
         const image = get<HTMLImageElement>(store, imageId);
         image.onerror = () => {
           const callback = instance.exports["call_closure"] as CallableFunction;
 
-          callback(BigInt(closure));
+          callback(BigInt(f) << BigInt(32));
         };
       },
       context_draw_image: (
@@ -163,16 +148,19 @@ const init = async () => {
         const image = get<HTMLImageElement>(store, imageId);
         context.drawImage(image, x, y);
       },
-      fetch: async (url: number, onSuccess: number) => {
+      fetch: async (url: number, f: number) => {
         const resp = await fetch(readJsString(url));
         if (resp.ok) {
           const text = await resp.text();
 
           const callback = instance.exports[
-            readJsString(onSuccess)
+            "call_closure_1"
           ] as CallableFunction;
 
-          callback(BigInt(insert(store, text)) << BigInt(32));
+          callback(
+            BigInt(f) << BigInt(32),
+            BigInt(insert(store, text)) << BigInt(32)
+          );
         }
       },
       jsvalue_string_length: (jsvalueId: number) => {
