@@ -113,11 +113,10 @@ fun main() {
     let window = js_window();
     let document = js_window_document(window);
     let canvas = js_document_get_element_by_id(document, "canvas");
-    let context_ = js_canvas_get_context(canvas, "2d");
-    let context = context_;
+    let context = js_canvas_get_context(canvas, "2d");
 
     sierpinski(
-        context_,
+        context,
         make[vec[struct {
             x: i32,
             y: i32,
@@ -143,24 +142,21 @@ fun main() {
         5,
     );
 
-    let image_ = js_image_new();
-    let image = image_;
-    js_image_set_src(image_, "assets/Idle (1).png");
+    let image = js_image_new();
+    js_image_set_src(image, "assets/Idle (1).png");
     js_image_set_onload(
-        image_,
+        image,
         fun () {
             js_context_draw_image(context, image, 0, 0);
         },
     );
 
     js_image_set_onerror(
-        image_,
+        image,
         fun () {
             panic("Image failed to load");
         },
     );
-
-    println("js_fetch:before");
 
     js_fetch(
         "assets/rhb.json",
@@ -175,20 +171,20 @@ fun main() {
 
             let sheet = Sheet::from_json(j!);
 
-            let image = js_image_new();
-            js_image_set_src(image, "assets/rhb.png");
-            // js_image_set_onload(
-            //     image,
-            //     fun () {
-            //         js_context_draw_image(context, image, 0, 0);
-            //     },
-            // );
-            // js_image_set_onerror(
-            //     image,
-            //     fun () {
-            //         panic("Image failed to load");
-            //     },
-            // );
+            let rhb = js_image_new();
+            js_image_set_src(rhb, "assets/rhb.png");
+            js_image_set_onload(
+                rhb,
+                fun () {
+                    js_context_draw_image(context, rhb, 0, 0);
+                },
+            );
+            js_image_set_onerror(
+                image,
+                fun () {
+                    panic("Image failed to load");
+                },
+            );
         },
     );
 
@@ -302,7 +298,7 @@ fun call_closure(callback: fun[(), nil]) {
 }
 
 @[ffi_export("call_closure_1")]
-fun call_closure_1(callback: fun[( any), nil], arg1: any) {
+fun call_closure_1(callback: fun[(any), nil], arg1: any) {
     callback(arg1);
 }
 

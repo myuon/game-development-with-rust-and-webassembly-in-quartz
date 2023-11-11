@@ -150,9 +150,7 @@ fun js_math_random_minmax(min: i32, max: i32): i32 {
 
 fun js_image_new(): JsRef {
     let i = _image_new();
-    println("js_image_new: {}", i.to_string());
     let j = JsRef::new(i);
-    println("js_image_new: {}", j.data.to_string());
 
     return j;
 }

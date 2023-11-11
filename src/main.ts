@@ -113,10 +113,7 @@ const init = async () => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       },
       image_new: () => {
-        let i = insert(store, new Image());
-        console.log(i);
-
-        return i;
+        return insert(store, new Image());
       },
       image_set_src: (imageId: number, src: number) => {
         const image = get<HTMLImageElement>(store, imageId);
