@@ -145,6 +145,22 @@ const init = async () => {
         const image = get<HTMLImageElement>(store, imageId);
         context.drawImage(image, x, y);
       },
+      context_draw_image_with_sw_sh_dx_dy_dw_dh: (
+        contextId: number,
+        imageId: number,
+        x: number,
+        y: number,
+        w: number,
+        h: number,
+        dx: number,
+        dy: number,
+        dw: number,
+        dh: number
+      ) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
+        const image = get<HTMLImageElement>(store, imageId);
+        context.drawImage(image, x, y, w, h, dx, dy, dw, dh);
+      },
       fetch: async (url: number, f: number) => {
         const resp = await fetch(readJsString(url));
         if (resp.ok) {

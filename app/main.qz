@@ -150,7 +150,6 @@ fun main() {
             js_context_draw_image(context, image, 0, 0);
         },
     );
-
     js_image_set_onerror(
         image,
         fun () {
@@ -170,17 +169,29 @@ fun main() {
             }
 
             let sheet = Sheet::from_json(j!);
+            let sprite = sheet.frames.("Run (1).png");
 
             let rhb = js_image_new();
             js_image_set_src(rhb, "assets/rhb.png");
             js_image_set_onload(
                 rhb,
                 fun () {
-                    js_context_draw_image(context, rhb, 0, 0);
+                    js_context_draw_image_with_sw_sh_dx_dy_dw_dh(
+                        context,
+                        rhb,
+                        sprite.frame.x,
+                        sprite.frame.y,
+                        sprite.frame.w,
+                        sprite.frame.h,
+                        300,
+                        300,
+                        sprite.frame.w,
+                        sprite.frame.h,
+                    );
                 },
             );
             js_image_set_onerror(
-                image,
+                rhb,
                 fun () {
                     panic("Image failed to load");
                 },

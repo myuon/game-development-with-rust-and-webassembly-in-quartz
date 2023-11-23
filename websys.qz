@@ -75,6 +75,9 @@ declare fun image_set_src(image: i32, src: ptr[byte]);
 @[declare_params(context as wasm_i32, image as wasm_i32, x as wasm_i32, y as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun context_draw_image(context: i32, image: i32, x: i32, y: i32);
 
+@[declare_params(context as wasm_i32, image as wasm_i32, x as wasm_i32, y as wasm_i32, w as wasm_i32, h as wasm_i32, dx as wasm_i32, dy as wasm_i32, dw as wasm_i32, dh as wasm_i32, result as wasm_void), declare_namespace("js")]
+declare fun context_draw_image_with_sw_sh_dx_dy_dw_dh(context: i32, image: i32, x: i32, y: i32, w: i32, h: i32, dx: i32, dy: i32, dw: i32, dh: i32);
+
 @[declare_params(image as wasm_i32, callback as wasm_i32, result as wasm_void), declare_namespace("js")]
 declare fun image_set_onload(image: i32, callback: any);
 
@@ -163,6 +166,21 @@ fun js_context_draw_image(context: JsRef, image: JsRef, x: i32, y: i32) {
     _context_draw_image(context.data, image.data, x, y);
 }
 
+fun js_context_draw_image_with_sw_sh_dx_dy_dw_dh(
+    context: JsRef,
+    image: JsRef,
+    x: i32,
+    y: i32,
+    w: i32,
+    h: i32,
+    dx: i32,
+    dy: i32,
+    dw: i32,
+    dh: i32,
+) {
+    _context_draw_image_with_sw_sh_dx_dy_dw_dh(context.data, image.data, x, y, w, h, dx, dy, dw, dh);
+}
+
 fun js_image_set_onload(image: JsRef, callback: fun[(), nil]) {
     _image_set_onload(image.data, callback);
 }
@@ -171,7 +189,7 @@ fun js_image_set_onerror(image: JsRef, c: fun[(), nil]) {
     _image_set_onerror(image.data, c);
 }
 
-fun js_fetch(url: string, callback: fun[( i32), nil]): JsRef {
+fun js_fetch(url: string, callback: fun[(i32), nil]): JsRef {
     return JsRef::new(_fetch(JsString::new(url).data, callback));
 }
 
