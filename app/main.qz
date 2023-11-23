@@ -12,6 +12,7 @@ fun main() {
     let document = js_window_document(window);
     let canvas = js_document_get_element_by_id(document, "canvas");
     let context = js_canvas_get_context(canvas, "2d");
+    let frame = 0 - 1;
 
     js_fetch(
         "assets/rhb.json",
@@ -25,24 +26,32 @@ fun main() {
             }
 
             let sheet = Sheet::from_json(j!);
-            let sprite = sheet.frames.("Run (1).png");
 
             let rhb = js_image_new();
             js_image_set_src(rhb, "assets/rhb.png");
             js_image_set_onload(
                 rhb,
                 fun () {
-                    js_context_draw_image_with_sw_sh_dx_dy_dw_dh(
-                        context,
-                        rhb,
-                        sprite.frame.x,
-                        sprite.frame.y,
-                        sprite.frame.w,
-                        sprite.frame.h,
-                        300,
-                        300,
-                        sprite.frame.w,
-                        sprite.frame.h,
+                    js_set_interval(
+                        fun () {
+                            frame = (frame + 1) % 8;
+                            js_context_clear_rect(context, 0, 0, 600, 600);
+
+                            let sprite = sheet.frames.("Run ({}).png".format((frame + 1).to_string()));
+                            js_context_draw_image_with_sw_sh_dx_dy_dw_dh(
+                                context,
+                                rhb,
+                                sprite.frame.x,
+                                sprite.frame.y,
+                                sprite.frame.w,
+                                sprite.frame.h,
+                                300,
+                                300,
+                                sprite.frame.w,
+                                sprite.frame.h,
+                            );
+                        },
+                        50,
                     );
                 },
             );

@@ -93,6 +93,12 @@ declare fun jsvalue_string_length(ref: i32): i32;
 @[declare_params(ref as wasm_i32, data as wasm_i32, length as wasm_i32, result as wasm_i32), declare_namespace("js")]
 declare fun jsvalue_string_set(ref: i32, data: ptr[byte], length: i32): i32;
 
+@[declare_params(callback as wasm_i32, timeout as wasm_i32, result as wasm_i32), declare_namespace("js")]
+declare fun set_interval_callback_with_timeout(callback: any, timeout: i32): i32;
+
+@[declare_params(context as wasm_i32, x as wasm_i32, y as wasm_i32, w as wasm_i32, h as wasm_i32, result as wasm_i32), declare_namespace("js")]
+declare fun context_clear_rect(context: i32, x: i32, y: i32, w: i32, h: i32): i32;
+
 // ----
 // js library
 fun js_console_log(message: string) {
@@ -207,5 +213,13 @@ fun jsstring(ref: JsRef): string {
     js_jsstring_set(ref, str_p, length);
 
     return new_string(str_p, length);
+}
+
+fun js_set_interval(callback: fun[(), nil], timeout: i32): JsRef {
+    return JsRef::new(_set_interval_callback_with_timeout(callback, timeout));
+}
+
+fun js_context_clear_rect(context: JsRef, x: i32, y: i32, w: i32, h: i32) {
+    _context_clear_rect(context.data, x, y, w, h);
 }
 

@@ -184,6 +184,26 @@ const init = async () => {
         let value = get<string>(store, jsvalueId);
         writeJsString(value, data, length);
       },
+      set_interval_callback_with_timeout: (
+        callbackId: number,
+        timeout: number
+      ) => {
+        const callback = instance.exports["call_closure"] as CallableFunction;
+
+        setInterval(() => {
+          callback(BigInt(callbackId) << BigInt(32));
+        }, timeout);
+      },
+      context_clear_rect: (
+        contextId: number,
+        x: number,
+        y: number,
+        width: number,
+        height: number
+      ) => {
+        const context = get<CanvasRenderingContext2D>(store, contextId);
+        context.clearRect(x, y, width, height);
+      },
     },
     wasi_snapshot_preview1: {
       fd_read: () => {},
